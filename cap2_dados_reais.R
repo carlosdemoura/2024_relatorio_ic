@@ -6,6 +6,7 @@ df =
   readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/temp_max_data.rds") |>
   filter(!missing)
 
+
 ############################
 #####   Exploratório   #####
 ############################
@@ -58,4 +59,3 @@ tmax_sc$fit     = fastan::run_stan(tmax_sc$model, iter = 15000)
 tmax_sc$summary = fastan::summary_matrix(tmax_sc$fit)
 
 saveRDS(tmax_sc, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_tmax_semiconfirmatorio.rds")
-
