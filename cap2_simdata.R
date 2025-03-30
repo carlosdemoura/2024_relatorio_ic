@@ -2,7 +2,7 @@ devtools::load_all("D:/carlos/01_pesquisa/fastan")
 library(tidyverse)
 
 df =
-  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/temp_max_data.rds") |>
+  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_temp_max_data.rds") |>
   filter(!missing)
 
 
@@ -28,7 +28,7 @@ simdata1$model =
 simdata1$fit     = fastan::run_stan(simdata1$model, iter = 8000)
 simdata1$summary = fastan::summary_matrix(simdata1$fit)
 
-saveRDS(simdata1, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/simdata_cap2_exploratorio.rds")
+saveRDS(simdata1, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_simdata_exploratorio.rds")
 
 
 #############################
@@ -56,7 +56,7 @@ simdata2$model = fastan::generate_data_sc(
 simdata2$fit     = fastan::run_stan(simdata2$model, iter = 8000)
 simdata2$summary = fastan::summary_matrix(simdata2$fit)
 
-saveRDS(simdata2, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/simdata_cap2_confirmatorio.rds")
+saveRDS(simdata2, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_simdata_confirmatorio.rds")
 
 
 ##################################
@@ -85,4 +85,4 @@ simdata3$model = fastan::generate_data_sc(
 simdata3$fit     = fastan::run_stan(simdata3$model, iter = 8000)
 simdata3$summary = fastan::summary_matrix(simdata3$fit)
 
-saveRDS(simdata3, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/simdata_cap2_semi_confirmatorio.rds")
+saveRDS(simdata3, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_simdata_semi_confirmatorio.rds")

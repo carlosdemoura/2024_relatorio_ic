@@ -14,7 +14,7 @@ proj1.2$model = fastan::generate_data_sc(
 proj1.2$fit   = fastan::run_stan(proj1.2$model, iter = 2000)
 proj1.2$summary = fastan::summary_matrix(proj1.2$fit)
 
-saveRDS(proj1.2, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/data/simdata_cap1_conf.rds")
+saveRDS(proj1.2, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/data/cap1_simdata_conf.rds")
 
 
 #########################################
@@ -33,4 +33,4 @@ proj1.3$model = fastan::generate_data_sc(
 proj1.3$fit   = fastan::run_stan(proj1.3$model, iter = 2000)
 proj1.3$summary = fastan::summary_matrix(proj1.3$fit)
 
-saveRDS(proj1.3, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/data/simdata_cap1_semiconf.rds")
+saveRDS(proj1.3, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/data/cap1_simdata_semiconf.rds")
