@@ -4,7 +4,7 @@ library(ggplot2)
 library(reshape2)
 
 df =
-  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/temp_max_data.rds")
+  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_data_tmax.rds")
 
 
 ##########################
@@ -93,7 +93,11 @@ saveRDS(simdata, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap3_simdat
 #####   real   #####
 ####################
 
-
+proj = list()
+proj$info    = "Dados de temperatura max semanal com dados faltantes; modelo semi-confrmatório por tipo de altitude; com predição"
+proj$model   = fastan::model_data_sc(df, "temp_max", "alt_tipo", "station.id", "semana", T)
+proj$fit     = fastan::run_stan(proj$model, iter = 8000)
+proj$summary = fastan::summary_matrix(simdata$fit)
 
 
 

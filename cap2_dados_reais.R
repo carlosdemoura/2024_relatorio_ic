@@ -3,7 +3,7 @@ devtools::load_all("D:/carlos/01_pesquisa/fastan")
 library(tidyverse)
 
 df = 
-  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/temp_max_data.rds") |>
+  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_data_tmax.rds") |>
   filter(!missing)
 
 
