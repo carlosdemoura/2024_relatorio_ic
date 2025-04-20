@@ -49,9 +49,3 @@ df =
   )
 
 saveRDS(df, file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_data_tmax.rds")
-
-summary(df$temp_max)
-table(stations$region)
-table(stations$region) / sum(table(stations$region))
-boxplot(stations$alt, main = "Boxplot das altitudes das estações")
-summary(stations$alt)
