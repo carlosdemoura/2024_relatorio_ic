@@ -5,7 +5,7 @@ library(reshape2)
 source("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/utils.R")
 
 df =
-  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_data_tmax.rds") %>%
+  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap4_data_tmax.rds") %>%
   arrange(alt_tipo, station.id, semana)
 
 ##########################
@@ -102,7 +102,7 @@ simdata$summary$lambda[,,c("mean", "median", "sd", "hpd_min", "hpd_max", "hpd_am
 simdata$summary$alpha[,,c("mean", "median", "sd", "hpd_min", "hpd_max", "hpd_amp")]  = (1/c) * simdata$summary$alpha[,,c("mean", "median", "sd", "hpd_min", "hpd_max", "hpd_amp"), drop = F]
 fastan::percentage_hits(simdata$summary)
 
-saveRDS(simdata, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap3_simdata_pred.rds")
+saveRDS(simdata, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_simdata_pred.rds")
 
 simdata$summary$pred = abind::abind(simdata$summary$pred, as.matrix(missing_real_value$value), along = 3)
 dimnames(simdata$summary$pred)[[3]][9] = "real"
@@ -133,4 +133,4 @@ proj$model$data =
 proj$fit     = fastan::run_stan(proj$model, iter = 10000, warmup = 4000, seed = 12345)
 proj$summary = fastan::summary_matrix(proj$fit)
 
-saveRDS(proj, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap3_tmax_pred.rds")
+saveRDS(proj, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_tmax_pred.rds")

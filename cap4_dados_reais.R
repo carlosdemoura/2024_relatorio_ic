@@ -3,7 +3,7 @@ devtools::load_all("D:/carlos/01_pesquisa/fastan")
 library(tidyverse)
 
 df = 
-  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_data_tmax.rds") %>%
+  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap4_data_tmax.rds") %>%
   filter(!missing) %>%
   arrange(regiao, station.id, semana)
 
@@ -28,7 +28,7 @@ tmax_expl$model =
 tmax_expl$fit     = fastan::run_stan(tmax_expl$model, iter = 10000, warmup = 2000, chains = 1, seed = 12345)
 tmax_expl$summary = fastan::summary_matrix(tmax_expl$fit)
 
-saveRDS(tmax_expl, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_tmax_exploratorio.rds")
+saveRDS(tmax_expl, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap4_tmax_exploratorio.rds")
 
 
 #############################
@@ -51,7 +51,7 @@ tmax_conf$model =
 tmax_conf$fit     = fastan::run_stan(tmax_conf$model, iter = 10000, warmup = 2000, chains = 1, seed = 12345)
 tmax_conf$summary = fastan::summary_matrix(tmax_conf$fit)
 
-saveRDS(tmax_conf, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_tmax_confirmatorio.rds")
+saveRDS(tmax_conf, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap4_tmax_confirmatorio.rds")
 
 
 ##################################
@@ -74,4 +74,4 @@ tmax_sc$model =
 tmax_sc$fit     = fastan::run_stan(tmax_sc$model, iter = 10000, warmup = 2000, chains = 1, seed = 12345)
 tmax_sc$summary = fastan::summary_matrix(tmax_sc$fit)
 
-saveRDS(tmax_sc, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_tmax_semi_confirmatorio.rds")
+saveRDS(tmax_sc, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap4_tmax_semi_confirmatorio.rds")

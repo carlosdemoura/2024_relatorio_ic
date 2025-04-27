@@ -32,11 +32,11 @@ ggplot() +
   labs(title = "Distribuição espacial das estações") +
   coord_fixed() + 
   theme_map
-ggsave(img("cap2_geral_mapa_estacoes.png"), width = 5, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_geral_mapa_estacoes.png"), width = 5, height = 5, dpi = 300, bg = "white")
 
 
 df =
-  readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_data_tmax.rds") %>%
+  readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap4_data_tmax.rds") %>%
   filter(!missing)
 
 summary(df$temp_max)
@@ -51,7 +51,7 @@ ggplot(stations, aes(y=alt, x=region)) +
        title = "Boxplot das altitudes por região") +
   theme_classic() +
   theme(text=element_text(size=15))
-ggsave(img("cap2_geral_boxplot_alt.png"), width = 6, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_geral_boxplot_alt.png"), width = 6, height = 5, dpi = 300, bg = "white")
 
 
 df2 = 
@@ -67,16 +67,16 @@ table(df$alt_tipo)/52
 #####   Exploratório   #####
 ############################
 
-tmax_expl = readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_tmax_exploratorio.rds")
+tmax_expl = readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap4_tmax_exploratorio.rds")
 
 plot_hpd(tmax_expl$summary, par = "alpha", col = 1, stat = "mean") + theme(text=element_text(size=20))
-ggsave(img("cap2_expl_alpha.png"), width = 15, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_expl_alpha.png"), width = 15, height = 5, dpi = 300, bg = "white")
 
 plot_hpd(tmax_expl$summary, par = "lambda", row = 1, stat = "mean") + theme(text=element_text(size=15))
-ggsave(img("cap2_expl_lambda.png"), width = 10, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_expl_lambda.png"), width = 10, height = 5, dpi = 300, bg = "white")
 
 plot_hpd(tmax_expl$summary, par = "sigma2", col = 1, stat = c("mean", "median"))  + theme(text=element_text(size=20))
-ggsave(img("cap2_expl_sigma2.png"), width = 15, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_expl_sigma2.png"), width = 15, height = 5, dpi = 300, bg = "white")
 
 
 ###  Histograma loadings  ###
@@ -115,7 +115,7 @@ ggplot(loadings, aes(x = alt, fill = as.factor(grupo))) +
        title = "Loadings vs altitude") +
   theme_minimal() +
   theme(text=element_text(size=15))
-ggsave(img("cap2_expl_loading.png"), width = 8, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_expl_loading.png"), width = 8, height = 5, dpi = 300, bg = "white")
 
 
 ###  Histograma variância  ###
@@ -133,23 +133,23 @@ ggplot(variance, aes(x = mean, fill = region)) +
        title = "Variância vs região") +
   theme_minimal() +
   theme(text=element_text(size=15))
-ggsave(img("cap2_expl_variance.png"), width = 8, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_expl_variance.png"), width = 8, height = 5, dpi = 300, bg = "white")
 
 
 #############################
 #####   Confirmatório   #####
 #############################
 
-tmax_conf = readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_tmax_confirmatorio.rds")
+tmax_conf = readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap4_tmax_confirmatorio.rds")
 
 plot_contrast(tmax_conf$summary) + theme(text=element_text(size=20))
-ggsave(img("cap2_conf_alpha.png"), width = 8, height = 8, dpi = 300, bg = "white")
+ggsave(img("cap4_conf_alpha.png"), width = 8, height = 8, dpi = 300, bg = "white")
 
 plot_lambda(tmax_conf$summary) + theme(text=element_text(size=15))
-ggsave(img("cap2_conf_lambda.png"), width = 10, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_conf_lambda.png"), width = 10, height = 5, dpi = 300, bg = "white")
 
 plot_hpd(tmax_conf$summary, par = "sigma2", col = 1, stat = c("mean", "median"))  + theme(text=element_text(size=20))
-ggsave(img("cap2_conf_sigma2.png"), width = 15, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_conf_sigma2.png"), width = 15, height = 5, dpi = 300, bg = "white")
 
 
 ###  Mapa das variâncias amostrais  ###
@@ -176,7 +176,7 @@ ggplot() +
   ) +
   coord_fixed() +
   theme_map
-ggsave(img("cap2_conf_mapa_var_amostra.png"), width = 7, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_conf_mapa_var_amostra.png"), width = 7, height = 5, dpi = 300, bg = "white")
 
 
 ###  Mapa das variâncias a posteriori  ###
@@ -201,26 +201,26 @@ ggplot() +
   ) +
   coord_fixed() +
   theme_map
-ggsave(img("cap2_conf_mapa_var_post.png"), width = 7, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_conf_mapa_var_post.png"), width = 7, height = 5, dpi = 300, bg = "white")
 
 
 ##################################
 #####   Semi-confirmatório   #####
 ##################################
 
-tmax_sc = readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_tmax_semi_confirmatorio.rds")
+tmax_sc = readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap4_tmax_semi_confirmatorio.rds")
 
 plot_hpd(tmax_sc$summary, par = "alpha", col = 1, stat = "mean") + theme(text=element_text(size=20))
-ggsave(img("cap2_sc_alpha1.png"), width = 15, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_sc_alpha1.png"), width = 15, height = 5, dpi = 300, bg = "white")
 
 plot_contrast(tmax_sc$summary, stat = "mean") + theme(text=element_text(size=20))
-ggsave(img("cap2_sc_contrast1.png"), width = 8, height = 8, dpi = 300, bg = "white")
+ggsave(img("cap4_sc_contrast1.png"), width = 8, height = 8, dpi = 300, bg = "white")
 
 plot_contrast(tmax_sc$summary, stat = "hpd_contains_0") + theme(text=element_text(size=20))
-ggsave(img("cap2_sc_contrast2.png"), width = 8, height = 8, dpi = 300, bg = "white")
+ggsave(img("cap4_sc_contrast2.png"), width = 8, height = 8, dpi = 300, bg = "white")
 
 plot_lambda(tmax_sc$summary) + theme(text=element_text(size=15))
-ggsave(img("cap2_sc_lambda.png"), width = 10, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_sc_lambda.png"), width = 10, height = 5, dpi = 300, bg = "white")
 
 
 ###  Mapa grupo extra  ###
@@ -260,7 +260,7 @@ ggplot() +
   ) +
   coord_fixed() +
   theme_map
-ggsave(img("cap2_sc_mapa_extra.png"), width = 6, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_sc_mapa_extra.png"), width = 6, height = 5, dpi = 300, bg = "white")
 
 
 ###  Mapa todos os grupos  ###
@@ -276,4 +276,4 @@ ggplot() +
   ) +
   coord_fixed() +
   theme_map
-ggsave(img("cap2_sc_mapa_geral.png"), width = 6, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap4_sc_mapa_geral.png"), width = 6, height = 5, dpi = 300, bg = "white")

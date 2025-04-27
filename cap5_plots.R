@@ -1,4 +1,4 @@
-## Executar cap3_missing.R ate a linha 93 ## 
+## Executar cap5_missing.R ate a linha 93 ## 
 rm(list = setdiff(ls(), "missing_real_value"))
 
 devtools::load_all("D:/carlos/01_pesquisa/fastan")
@@ -10,7 +10,7 @@ library(reshape2)
 source("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/utils.R")
 
 df =
-  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_data_tmax.rds") %>%
+  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap4_data_tmax.rds") %>%
   arrange(alt_tipo, station.id, semana)
 
 ##########################
@@ -41,7 +41,8 @@ df =
   filter(!missing | station.id %in% ellegilbe_stations) %>%
   arrange(alt_tipo)
 
-tmax_pred = readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap3_tmax_pred.rds")
+tmax_pred = readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_tmax_pred.rds")
+simdata = readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_simdata_pred.rds")
 
 
 ##########################
@@ -57,10 +58,10 @@ ggplot(filter(stations, station.id %in% ellegilbe_stations), aes(y=alt, x=region
        title = "Boxplot das altitudes por região\n(estações com missings)") +
   theme_classic() +
   theme(text=element_text(size=15))
-ggsave(img("cap3_geral_boxplot.png"), width = 6, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap5_geral_boxplot.png"), width = 6, height = 5, dpi = 300, bg = "white")
 
 fastan::plot_missing(tmax_pred$model) + theme(text = element_text(size = 15))
-ggsave(img("cap3_geral_contrast.png"), width = 6, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap5_geral_contrast.png"), width = 6, height = 5, dpi = 300, bg = "white")
 
 library(maps)
 theme_map = 
@@ -78,15 +79,15 @@ theme_map =
 
 br_map = map_data("world", region = "Brazil")
 
-ggplot() +
-  geom_polygon(data = br_map, aes(x = long, y = lat, group = group),
-               fill = "lightblue", color = "black") +
-  geom_point(data = filter(stations, station.id %in% ellegilbe_stations), aes(x = lon, y = lat),
-             size = 1) +
-  labs(title = "Distribuição espacial das estações") +
-  coord_fixed() + 
-  theme_map
-ggsave(img("cap2_geral_mapa_estacoes.png"), width = 5, height = 5, dpi = 300, bg = "white")
+# ggplot() +
+#   geom_polygon(data = br_map, aes(x = long, y = lat, group = group),
+#                fill = "lightblue", color = "black") +
+#   geom_point(data = filter(stations, station.id %in% ellegilbe_stations), aes(x = lon, y = lat),
+#              size = 1) +
+#   labs(title = "Distribuição espacial das estações") +
+#   coord_fixed() + 
+#   theme_map
+# ggsave(img("cap2_geral_mapa_estacoes.png"), width = 5, height = 5, dpi = 300, bg = "white")
 
 
 ####################
@@ -134,7 +135,7 @@ ggplot(df, aes(col, row, fill = hpd_amp)) +
   scale_y_discrete(labels = row_labels) +
   labs(x = "Column", y = "Row", title = "Amplitude dos intervalos HPD") +
   theme(text = element_text(size = 15))
-ggsave(img("cap3_mcmc_hpd_amp.png"), width = 6, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap5_mcmc_hpd_amp.png"), width = 6, height = 5, dpi = 300, bg = "white")
 
 
 stations |>
@@ -163,7 +164,7 @@ xxx =
     week = factor(week)
   )
 
-ggplot(xxx, aes(y=hpd_amp, x=week)) +
+ggplot(xxx, aes(y=hpd_amp)) +
   geom_boxplot() +
   labs(x = "semana",
        y = "Amplitude do HPD",
@@ -172,7 +173,7 @@ ggplot(xxx, aes(y=hpd_amp, x=week)) +
   theme(text=element_text(size=15),
         axis.text.x = element_blank(),
         axis.ticks.x = element_blank())
-ggsave(img("cap3_mcmc_boxplot.png"), width = 5, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap5_mcmc_boxplot.png"), width = 5, height = 5, dpi = 300, bg = "white")
 
 relacao_var_hpd_real =
   tmax_pred$summary$pred %>%
@@ -200,7 +201,7 @@ ggplot(relacao_var_hpd_real, aes(x=hpd_amp_mean, y=sigma2)) +
        title = "Amplitude dos intervalos HPD vs. variância",
        subtitle = "Dados reais") +
   theme(text = element_text(size = 15))
-ggsave(img("cap3_mcmc_hpd_var_real.png"), width = 6, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap5_mcmc_hpd_var_real.png"), width = 6, height = 5, dpi = 300, bg = "white")
 
 
 
@@ -208,7 +209,7 @@ ggsave(img("cap3_mcmc_hpd_var_real.png"), width = 6, height = 5, dpi = 300, bg =
 #####   simdata   #####
 #######################
 
-simdata = readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap3_simdata_pred.rds")
+simdata = readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_simdata_pred.rds")
 
 simdata$summary$pred = abind::abind(simdata$summary$pred, as.matrix(missing_real_value$value), along = 3)
 dimnames(simdata$summary$pred)[[3]][9] = "real"
@@ -236,7 +237,7 @@ ggplot(relacao_var_hpd_simdata, aes(x=hpd_amp_mean, y=sigma2)) +
        title = "Amplitude dos intervalos HPD vs. variância real",
        subtitle = "Dados simulados") +
   theme(text = element_text(size = 15))
-ggsave(img("cap3_mcmc_hpd_var_simdata.png"), width = 6, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap5_mcmc_hpd_var_simdata.png"), width = 6, height = 5, dpi = 300, bg = "white")
 
 
 
