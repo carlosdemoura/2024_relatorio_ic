@@ -1,13 +1,13 @@
 cap1_gibbs - Copia.R
 cap1_gibbs.R
 Cópia_de_segurança_de_matriz_alpha.cdr
-cap2_simdata_confirmatorio.rds
-cap2_simdata_exploratorio.rds
-cap2_simdata_semi_confirmatorio.rds
-cap2_tmax_confirmatorio.rds
-cap2_tmax_exploratorio.rds
-cap2_tmax_semi_confirmatorio.rds
-cap3_simdata_pred.rds
-cap3_tmax_pred.rds
-cap3_tmax_pred_p15.rds
+cap3_simdata_confirmatorio.rds
+cap3_simdata_exploratorio.rds
+cap3_simdata_semi_confirmatorio.rds
+cap4_tmax_confirmatorio.rds
+cap4_tmax_exploratorio.rds
+cap4_tmax_semi_confirmatorio.rds
+cap5_simdata_pred.rds
+cap5_tmax_pred.rds
+cap5_tmax_pred_p15.rds
 img/
