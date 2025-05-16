@@ -1,6 +1,11 @@
 img = function(x) {paste0("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/img/", x)}
 
-generate_data_sc = function(rows.by.group, columns, semi.conf = F, semi.conf.engine = stats::runif) {
+
+generate_data_sc = function(rows.by.group, columns, semi.conf = F, factors.alike = F) {
+  normalize = function(x) {
+    1.5 * (x - min(x)) / (max(x)-min(x))
+  }
+  
   stopifnot(
     "if the model is semi.conf there
     must be at least three groups" = ifelse(semi.conf, length(rows.by.group) >= 3, T)
@@ -18,22 +23,35 @@ generate_data_sc = function(rows.by.group, columns, semi.conf = F, semi.conf.eng
   
   for (i in 1:n.fac) {
     alpha[groups_limits[[1]][i] : groups_limits[[2]][i], i] = stats::runif(rows.by.group[i], 3, 8)
-    lambda[i, ] = stats::rnorm(columns, 4, 1) |> sort(decreasing = as.logical(i %/% 2))
+  }
+  
+  if (factors.alike) {
+    for (i in 1:n.fac) {
+      lambda[i, ] = stats::rnorm(columns, 4, 1) |> sort(decreasing = as.logical(i %/% 2))
+    }
+    lambda = lambda |> abs()
+  } else {
+    for (j in 2:columns) {
+      lambda[i,j] = rnorm(1, lambda[i,j-1])
+    }
+    lambda =
+      lambda |>
+      apply(1, normalize) |>
+      t()
   }
   
   if (semi.conf) {
     i = i + 1
     alpha[groups_limits[[1]][i] : groups_limits[[2]][i], ] =
       matrix(
-        semi.conf.engine(rows.by.group[i] * n.fac, 3, 8),
+        stats::runif(rows.by.group[i] * n.fac, 3, 8),
         nrow = rows.by.group[i],
         ncol = n.fac
       )
   }
   
-  alpha  = alpha  |> abs()
-  lambda = lambda |> abs()
-  sigma2 = stats::runif(sum(rows.by.group), .5, 40)
+  alpha  = abs(alpha)
+  sigma2 = stats::runif(sum(rows.by.group), 1, 35)
   
   epsilon = matrix(
     stats::rnorm(sum(rows.by.group)*columns, 0, sqrt(sigma2)) ,
@@ -76,7 +94,6 @@ generate_data_sc = function(rows.by.group, columns, semi.conf = F, semi.conf.eng
 }
 
 
-
 runif_or_0 = function(n, min = 0, max = 1, p0 = .5) {
   n0 = floor(p0 * n)
   x = 
@@ -86,9 +103,10 @@ runif_or_0 = function(n, min = 0, max = 1, p0 = .5) {
   return(x)
 }
 
+
 get_gewekes = function(fit) {
   fit |>
-  rstan::extract(permuted = F) |>
-  apply(c(2, 3), function(x) {coda::geweke.diag(x) |> purrr::pluck(1) |> unname()} ) |>
-  as.vector()
+    rstan::extract(permuted = F) |>
+    apply(c(2, 3), function(x) {coda::geweke.diag(x) |> purrr::pluck(1) |> unname()} ) |>
+    as.vector()
 }

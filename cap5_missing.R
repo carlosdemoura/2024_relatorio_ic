@@ -96,10 +96,6 @@ simdata$info    = "Dados simulados com mesmo tamanho que dados reais; modelo sem
 simdata$model   = simdata_mod
 simdata$fit     = fastan::run_stan(simdata$model, iter = 10000, warmup = 2000, chains = 1, seed = 12345)
 simdata$summary = fastan::summary_matrix(simdata$fit, simdata$model)
-
-c = 2.1
-simdata$summary$lambda[,,c("mean", "median", "sd", "hpd_min", "hpd_max", "hpd_amp")] = c * simdata$summary$lambda[,,c("mean", "median", "sd", "hpd_min", "hpd_max", "hpd_amp"), drop = F]
-simdata$summary$alpha[,,c("mean", "median", "sd", "hpd_min", "hpd_max", "hpd_amp")]  = (1/c) * simdata$summary$alpha[,,c("mean", "median", "sd", "hpd_min", "hpd_max", "hpd_amp"), drop = F]
 fastan::percentage_hits(simdata$summary)
 
 saveRDS(simdata, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_simdata_pred.rds")
@@ -118,19 +114,37 @@ as.numeric() |>
 #####   real   #####
 ####################
 
-proj       = list()
-proj$info  = "Dados de temperatura max semanal com dados faltantes; modelo semi-confrmatório por tipo de altitude; com predição"
-proj$model = fastan::model_data_sc(df, "temp_max", "alt_tipo", "station.id", "semana", T)
+proj1       = list()
+proj1$info  = "Dados de temperatura max semanal com dados faltantes; modelo semi-confrmatório por tipo de altitude; com predição"
+proj1$model = fastan::model_data_sc(df, "temp_max", "alt_tipo", "station.id", "semana", T)
 
-proj$model$pred =
-  proj$model$data |>
+proj1$model$pred =
+  proj1$model$data |>
   {\(.) dplyr::filter(., is.na(.$value))}()
 
-proj$model$data =
-  proj$model$data |>
+proj1$model$data =
+  proj1$model$data |>
   {\(.) dplyr::filter(., !is.na(.$value))}()
 
-proj$fit     = fastan::run_stan(proj$model, iter = 10000, warmup = 4000, seed = 12345)
-proj$summary = fastan::summary_matrix(proj$fit)
+proj1$fit     = fastan::run_stan(proj1$model, iter = 10000, warmup = 4000, seed = 12345)
+proj1$summary = fastan::summary_matrix(proj1$fit)
 
-saveRDS(proj, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_tmax_pred.rds")
+saveRDS(proj1, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_tmax_pred.rds")
+
+
+###############################
+#####   ignore missings   #####
+###############################
+
+proj2       = list()
+proj2$info  = "Dados de temperatura max semanal com dados faltantes; modelo semi-confrmatório por tipo de altitude; com predição"
+proj2$model = fastan::model_data_sc(df, "temp_max", "alt_tipo", "station.id", "semana", T)
+
+proj2$model$data =
+  proj2$model$data |>
+  {\(.) dplyr::filter(., !is.na(.$value))}()
+
+proj2$fit     = fastan::run_stan(proj2$model, iter = 10000, warmup = 4000, seed = 12345)
+proj2$summary = fastan::summary_matrix(proj2$fit)
+
+saveRDS(proj2, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_tmax_pred.rds")
