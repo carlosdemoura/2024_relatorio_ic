@@ -85,66 +85,31 @@ simdata_mod$data =
   select(!value.y) %>%
   rename(value = "value.x")
 
-missing_real_value =
-  xxx %>%
-  filter(!is.na(value.y)) %>%
-  select(!value.y) %>%
-  rename(value = "value.x")
+simdata_mod$pred = NULL
 
 simdata         = list()
 simdata$info    = "Dados simulados com mesmo tamanho que dados reais; modelo semi-confrmatório; com predição; dados faltantes nas mesmas posições que os faltantes no banco real"
 simdata$model   = simdata_mod
-simdata$fit     = fastan::run_stan(simdata$model, iter = 10000, warmup = 2000, chains = 1, seed = 12345)
+simdata$fit     = fastan::run_stan(simdata$model, iter = 50, warmup = 10, chains = 1, seed = 12345)
 simdata$summary = fastan::summary_matrix(simdata$fit, simdata$model)
 fastan::percentage_hits(simdata$summary)
 
-saveRDS(simdata, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_simdata_pred.rds")
-
-simdata$summary$pred = abind::abind(simdata$summary$pred, as.matrix(missing_real_value$value), along = 3)
-dimnames(simdata$summary$pred)[[3]][9] = "real"
-smry = simdata$summary
-par = "pred"
-smry[[par]][,,"real"] |>
-{\(.) (. >= smry[[par]][,,"hpd_min"]) & (. <= smry[[par]][,,"hpd_max"])}() |>
-as.numeric() |>
-{\(x) c(mean(x), length(x))}()
+saveRDS(simdata, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_simdata_ignore.rds")
 
 
 ####################
 #####   real   #####
 ####################
 
-proj1       = list()
-proj1$info  = "Dados de temperatura max semanal com dados faltantes; modelo semi-confrmatório por tipo de altitude; com predição"
-proj1$model = fastan::model_data_sc(df, "temp_max", "alt_tipo", "station.id", "semana", T)
+tmax       = list()
+tmax$info  = "Dados de temperatura max semanal com dados faltantes; modelo semi-confrmatório por tipo de altitude; com predição"
+tmax$model = fastan::model_data_sc(df, "temp_max", "alt_tipo", "station.id", "semana", T)
 
-proj1$model$pred =
-  proj1$model$data |>
-  {\(.) dplyr::filter(., is.na(.$value))}()
-
-proj1$model$data =
-  proj1$model$data |>
+tmax$model$data =
+  tmax$model$data |>
   {\(.) dplyr::filter(., !is.na(.$value))}()
 
-proj1$fit     = fastan::run_stan(proj1$model, iter = 10000, warmup = 4000, seed = 12345)
-proj1$summary = fastan::summary_matrix(proj1$fit)
+tmax$fit     = fastan::run_stan(tmax$model, iter = 10000, warmup = 4000, seed = 12345)
+tmax$summary = fastan::summary_matrix(tmax$fit)
 
-saveRDS(proj1, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_tmax_pred.rds")
-
-
-###############################
-#####   ignore missings   #####
-###############################
-
-proj2       = list()
-proj2$info  = "Dados de temperatura max semanal com dados faltantes; modelo semi-confrmatório por tipo de altitude; com predição"
-proj2$model = fastan::model_data_sc(df, "temp_max", "alt_tipo", "station.id", "semana", T)
-
-proj2$model$data =
-  proj2$model$data |>
-  {\(.) dplyr::filter(., !is.na(.$value))}()
-
-proj2$fit     = fastan::run_stan(proj2$model, iter = 10000, warmup = 4000, seed = 12345)
-proj2$summary = fastan::summary_matrix(proj2$fit)
-
-saveRDS(proj2, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_tmax_pred_ignore.rds")
+saveRDS(tmax, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_tmax_ignore.rds")

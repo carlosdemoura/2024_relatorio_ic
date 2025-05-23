@@ -28,7 +28,7 @@ simdata_expl$fit     = fastan::run_stan(simdata_expl$model, iter = 10000, warmup
 simdata_expl$summary = fastan::summary_matrix(simdata_expl$fit, simdata_expl$model)
 fastan::percentage_hits(simdata_expl$summary)
 
-saveRDS(simdata_expl, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_simdata_exploratorio.rds")
+saveRDS(simdata_expl, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap3_simdata_exploratorio.rds")
 
 
 #############################
@@ -51,7 +51,7 @@ simdata_conf$fit     = fastan::run_stan(simdata_conf$model, iter = 10000, warmup
 simdata_conf$summary = fastan::summary_matrix(simdata_conf$fit, simdata_conf$model)
 fastan::percentage_hits(simdata_conf$summary)
 
-saveRDS(simdata_conf, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_simdata_confirmatorio.rds")
+saveRDS(simdata_conf, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap3_simdata_confirmatorio.rds")
 
 
 ##################################
@@ -75,4 +75,4 @@ simdata_sc$fit     = fastan::run_stan(simdata_sc$model, iter = 10000, warmup = 2
 simdata_sc$summary = fastan::summary_matrix(simdata_sc$fit, simdata_sc$model)
 fastan::percentage_hits(simdata_sc$summary)
 
-saveRDS(simdata_sc, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap2_simdata_semi_confirmatorio.rds")
+saveRDS(simdata_sc, "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap3_simdata_semi_confirmatorio.rds")

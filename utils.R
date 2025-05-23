@@ -3,7 +3,9 @@ img = function(x) {paste0("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/im
 
 generate_data_sc = function(rows.by.group, columns, semi.conf = F, factors.alike = F) {
   normalize = function(x) {
-    1.5 * (x - min(x)) / (max(x)-min(x))
+    norm = (x - min(x)) / (max(x)-min(x))
+    norm[which(norm==0)] = min(norm[norm > 0]) / 2
+    norm
   }
   
   stopifnot(
@@ -26,18 +28,24 @@ generate_data_sc = function(rows.by.group, columns, semi.conf = F, factors.alike
   }
   
   if (factors.alike) {
+    
     for (i in 1:n.fac) {
       lambda[i, ] = stats::rnorm(columns, 4, 1) |> sort(decreasing = as.logical(i %/% 2))
     }
     lambda = lambda |> abs()
+    
   } else {
-    for (j in 2:columns) {
-      lambda[i,j] = rnorm(1, lambda[i,j-1])
+    
+    for (i in 1:n.fac) {
+      for (j in 2:columns) {
+        lambda[i,j] = rnorm(1, lambda[i,j-1])
+      }
     }
     lambda =
       lambda |>
       apply(1, normalize) |>
       t()
+    
   }
   
   if (semi.conf) {
@@ -50,7 +58,6 @@ generate_data_sc = function(rows.by.group, columns, semi.conf = F, factors.alike
       )
   }
   
-  alpha  = abs(alpha)
   sigma2 = stats::runif(sum(rows.by.group), 1, 35)
   
   epsilon = matrix(
