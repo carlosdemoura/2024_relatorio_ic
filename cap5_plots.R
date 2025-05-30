@@ -175,6 +175,15 @@ ggplot(xxx, aes(y=hpd_amp)) +
         axis.ticks.x = element_blank())
 ggsave(img("cap5_mcmc_boxplot.png"), width = 5, height = 5, dpi = 300, bg = "white")
 
+mvar = 
+  tmax_pred$model$data %>%
+  group_by(row) %>% 
+  summarise(s2 = var(value),
+            .groups = 'drop') %>%
+  mutate(
+    station.id = tmax_pred$model$labels$loading
+  )
+
 relacao_var_hpd_real =
   tmax_pred$summary$pred %>%
   matrix_to_df() %>%
@@ -192,16 +201,20 @@ relacao_var_hpd_real =
   left_join(
     data.frame(sigma2 = tmax_pred$summary$sigma2[,,"mean"]) %>% mutate(row = 1:nrow(.)),
     by = "row"
-  )
+  ) %>%
+  merge(mvar, by = "row")
 
-ggplot(relacao_var_hpd_real, aes(x=hpd_amp_mean, y=sigma2)) +
+ggplot(relacao_var_hpd_real, aes(x=s2, y=hpd_amp_mean)) +
   geom_point() +
-  labs(x = "Média das amplitudes dos HPD",
-       y = "Média postetiror da variância",
-       title = "Amplitude dos intervalos HPD vs. variância",
+  labs(x = "Variância amostral",
+       y = "Média das amplitudes dos HPD",
+       title = "Amplitude dos intervalos HPD\nvs. variância amostral",
        subtitle = "Dados reais") +
   theme(text = element_text(size = 15))
 ggsave(img("cap5_mcmc_hpd_var_real.png"), width = 6, height = 5, dpi = 300, bg = "white")
+
+
+
 
 
 
@@ -230,10 +243,10 @@ relacao_var_hpd_simdata =
     by = "row"
   )
 
-ggplot(relacao_var_hpd_simdata, aes(x=hpd_amp_mean, y=sigma2)) +
+ggplot(relacao_var_hpd_simdata, aes(x=sigma2, y=hpd_amp_mean)) +
   geom_point() +
-  labs(x = "Média das amplitudes dos HPD",
-       y = "Variância real",
+  labs(x = "Variância real",
+       y = "Média das amplitudes dos HPD",
        title = "Amplitude dos intervalos HPD vs. variância real",
        subtitle = "Dados simulados") +
   theme(text = element_text(size = 15))

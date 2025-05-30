@@ -117,3 +117,88 @@ get_gewekes = function(fit) {
     apply(c(2, 3), function(x) {coda::geweke.diag(x) |> purrr::pluck(1) |> unname()} ) |>
     as.vector()
 }
+
+
+percentage_hits_pred = function(smry, missing_real_value) {
+  table = fastan::percentage_hits(smry)
+  smry$pred = abind::abind(smry$pred, as.matrix(missing_real_value$value), along = 3)
+  dimnames(smry$pred)[[3]][9] = "real"
+  
+  par = "pred"
+  table[4,] =
+    smry[[par]][,,"real"] |>
+    {\(.) (. >= smry[[par]][,,"hpd_min"]) & (. <= smry[[par]][,,"hpd_max"])}() |>
+    as.numeric() |>
+    {\(x) c(mean(x), length(x))}()
+  rownames(table)[4] = "pred"
+  
+  table = 
+    {stats::weighted.mean(table$p, table$total) |> c(sum(table$total))} |> 
+    {\(.) rbind(table, .)}()
+  rownames(table)[5] = "all"
+  table
+}
+
+
+fiat_simdata_w_pred_from_real_data = function(mod) {
+  cols = max(mod$data$col)
+  rows.by.group =
+    c(mod$data$group, mod$pred$group) |>
+    {\(.) .[!is.null(.)]}() |>
+    table() |>
+    unname() |>
+    {\(.) ./cols}()
+  
+  simdata_mod = 
+    generate_data_sc(
+      rows.by.group = rows.by.group,
+      columns = cols,
+      semi.conf = is.semi.conf(mod)
+    )
+  
+  coor_missing =
+    mod$pred |>
+    {\(.) paste(.$row, .$col)}()
+  
+  simdata_mod$real_missing =
+    simdata_mod$data |>
+    {\(.) dplyr::filter(., paste(.$row, .$col) %in% coor_missing)}() 
+  
+  simdata_mod$data =
+    simdata_mod$data |>
+    {\(.) dplyr::filter(., !(paste(.$row, .$col) %in% coor_missing))}() 
+  
+  simdata_mod$pred = mod$pred
+    
+  simdata_mod
+}
+
+
+filter_by_max_missing = function(df, value, row, p) {
+  missings_by_row = 
+    df %>%
+    mutate(
+      missing = is.na(!!rlang::sym(value)) |> as.numeric()
+    ) %>%
+    group_by_at(row) %>%
+    summarise(missing_p = mean(missing),
+              .groups = "drop")
+  
+  ellegilbe_rows = 
+    missings_by_row %>%
+    dplyr::filter(missing_p <= p) %>%
+    select(row) %>%
+    c() %>%
+    purrr::pluck(1)
+  
+  df =
+    df %>%
+    dplyr::filter(!!rlang::sym(row) %in% ellegilbe_rows)
+  
+  df
+}
+
+
+is.semi.conf = function(mod) {
+  as.logical(max(mod$data$group) - mod$dim$al_fac)
+}
