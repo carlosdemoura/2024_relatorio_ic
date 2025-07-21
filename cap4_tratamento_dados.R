@@ -48,4 +48,37 @@ df =
     missing = station.id %in% missing
   )
 
-saveRDS(df, file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap4_data_tmax.rds")
+saveRDS(df, file = "data_tmax.rds")
+
+
+
+filter_by_max_missing = function(df, value, row, p) {
+  missings_by_row = 
+    df %>%
+    mutate(
+      missing = is.na(!!rlang::sym(value)) |> as.numeric()
+    ) %>%
+    group_by_at(row) %>%
+    summarise(missing_p = mean(missing),
+              .groups = "drop")
+  
+  ellegilbe_rows = 
+    missings_by_row %>%
+    dplyr::filter(missing_p <= p) %>%
+    dplyr::select(dplyr::all_of(row)) %>%
+    #select(row) %>%
+    c() %>%
+    purrr::pluck(1)
+  
+  df =
+    df %>%
+    dplyr::filter(!!rlang::sym(row) %in% ellegilbe_rows)
+  
+  df
+}
+
+p_missing_max = 40
+df =
+  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/data_tmax.rds") %>%
+  arrange(alt_tipo, station.id, semana) %>%
+  filter_by_max_missing("temp_max", "station.id", p_missing_max/100)

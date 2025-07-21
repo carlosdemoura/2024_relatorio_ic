@@ -2,12 +2,12 @@ devtools::load_all("D:/carlos/01_pesquisa/fastan")
 library(tidyverse)
 library(ggplot2)
 library(reshape2)
-source("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/utils.R")
+source("utils.R")
 
-p_missing_max = 30
+p_missing_max = 99
 
 df =
-  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap4_data_tmax.rds") %>%
+  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/data_tmax.rds") %>%
   arrange(alt_tipo, station.id, semana) %>%
   filter_by_max_missing("temp_max", "station.id", p_missing_max/100)
 

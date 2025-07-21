@@ -1,8 +1,6 @@
 devtools::load_all("D:/carlos/01_pesquisa/meteobr")
 devtools::load_all("D:/carlos/01_pesquisa/fastan")
-library(tidyverse)
-library(maps)
-source("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/utils.R")
+source("utils.R")
 
 
 ############################

@@ -1,93 +1,48 @@
-## Executar cap5_missing.R ate a linha 93 ## 
-rm(list = setdiff(ls(), "missing_real_value"))
-
 devtools::load_all("D:/carlos/01_pesquisa/fastan")
 devtools::load_all("D:/carlos/01_pesquisa/meteobr")
 library(tidyverse)
-library(ggplot2)
-library(reshape2)
-  library(plotly)
-source("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/utils.R")
+# library(ggplot2)
+# library(reshape2)
+# library(plotly)
+source("utils.R")
 
+p_missing_max = 40
 df =
-  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap4_data_tmax.rds") %>%
-  arrange(alt_tipo, station.id, semana)
+  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/data_tmax.rds") %>%
+  arrange(alt_tipo, station.id, semana) %>%
+  filter_by_max_missing("temp_max", "station.id", p_missing_max/100)
 
-##########################
-#####   tratamento   #####
-##########################
+cap3_simdata_expl = readRDS("cap3_simdata_expl.rds")
+cap3_simdata_conf = readRDS("cap3_simdata_conf.rds")
+cap3_simdata_sc   = readRDS("cap3_simdata_sc.rds")
 
-p_missing_max = .2
-
-stations_missings = 
-  df %>%
-  filter(missing) %>% 
-  mutate(
-    missing = is.na(temp_max) |> as.numeric()
-  ) %>%
-  group_by(station.id) %>%
-  summarise(missing_p = mean(missing),
-            .groups = "drop")
-
-ellegilbe_stations = 
-  stations_missings %>%
-  filter(missing_p <= p_missing_max) %>%
-  select(station.id) %>%
-  c() %>%
-  purrr::pluck(1)
-
-df =
-  df %>%
-  filter(!missing | station.id %in% ellegilbe_stations) %>%
-  arrange(alt_tipo)
-
-tmax_pred = readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_tmax_pred.rds")
-simdata = readRDS("D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap5_simdata_pred.rds")
+cap4_tmax_expl = readRDS("cap4_tmax_expl.rds")
+cap4_tmax_conf = readRDS("cap4_tmax_conf.rds")
+cap4_tmax_sc   = readRDS("cap4_tmax_sc.rds")
 
 
-##########################
-#####   descritiva   #####
-##########################
+##################################
+#####   missing validation   #####
+##################################
 
-filter(stations, station.id %in% ellegilbe_stations) %>% select(region) %>% table() /71
+cap5_mv_expl =
+  cap4_tmax_expl |>
+  missing_validation() |>
+  set_fit(iter = 1e5, seed = 12345)
 
-ggplot(filter(stations, station.id %in% ellegilbe_stations), aes(y=alt, x=region)) +
-  geom_boxplot() +
-  labs(x = "Região", 
-       y = "Altitude (metros)",
-       title = "Boxplot das altitudes por região\n(estações com missings)") +
-  theme_classic() +
-  theme(text=element_text(size=15))
-ggsave(img("cap5_geral_boxplot.png"), width = 6, height = 5, dpi = 300, bg = "white")
+cap5_mv_conf =
+  cap4_tmax_conf |>
+  missing_validation() |>
+  set_fit(iter = 1e5, seed = 12345)
 
-fastan::plot_missing(tmax_pred$model) + theme(text = element_text(size = 15))
-ggsave(img("cap5_geral_contrast.png"), width = 6, height = 5, dpi = 300, bg = "white")
+cap5_mv_sc =
+  cap4_tmax_sc |>
+  missing_validation() |>
+  set_fit(iter = 1e5, seed = 12345)
 
-library(maps)
-theme_map = 
-  theme(
-    text = element_text(size = 15),
-    axis.text.x = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.title.x = element_blank(),
-    axis.text.y = element_blank(),
-    axis.ticks.y = element_blank(),
-    axis.title.y = element_blank(),
-    panel.grid = element_blank(),
-    panel.background = element_blank()
-  )
-
-br_map = map_data("world", region = "Brazil")
-
-# ggplot() +
-#   geom_polygon(data = br_map, aes(x = long, y = lat, group = group),
-#                fill = "lightblue", color = "black") +
-#   geom_point(data = filter(stations, station.id %in% ellegilbe_stations), aes(x = lon, y = lat),
-#              size = 1) +
-#   labs(title = "Distribuição espacial das estações") +
-#   coord_fixed() + 
-#   theme_map
-# ggsave(img("cap2_geral_mapa_estacoes.png"), width = 5, height = 5, dpi = 300, bg = "white")
+accuracy(cap5_mv_expl)
+accuracy(cap5_mv_conf)
+accuracy(cap5_mv_sc)
 
 
 ####################
@@ -135,7 +90,7 @@ ggplot(df, aes(col, row, fill = hpd_amp)) +
   scale_y_discrete(labels = row_labels) +
   labs(x = "Column", y = "Row", title = "Amplitude dos intervalos HPD") +
   theme(text = element_text(size = 15))
-ggsave(img("cap5_mcmc_hpd_amp.png"), width = 6, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap5_mcmc_hpd_amp"), width = 6, height = 5, dpi = 300, bg = "white")
 
 
 stations |>
@@ -173,7 +128,7 @@ ggplot(xxx, aes(y=hpd_amp)) +
   theme(text=element_text(size=15),
         axis.text.x = element_blank(),
         axis.ticks.x = element_blank())
-ggsave(img("cap5_mcmc_boxplot.png"), width = 5, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap5_mcmc_boxplot"), width = 5, height = 5, dpi = 300, bg = "white")
 
 mvar = 
   tmax_pred$model$data %>%
@@ -211,7 +166,7 @@ ggplot(relacao_var_hpd_real, aes(x=s2, y=hpd_amp_mean)) +
        title = "Amplitude dos intervalos HPD\nvs. variância amostral",
        subtitle = "Dados reais") +
   theme(text = element_text(size = 15))
-ggsave(img("cap5_mcmc_hpd_var_real.png"), width = 6, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap5_mcmc_hpd_var_real"), width = 6, height = 5, dpi = 300, bg = "white")
 
 
 
@@ -250,7 +205,7 @@ ggplot(relacao_var_hpd_simdata, aes(x=sigma2, y=hpd_amp_mean)) +
        title = "Amplitude dos intervalos HPD vs. variância real",
        subtitle = "Dados simulados") +
   theme(text = element_text(size = 15))
-ggsave(img("cap5_mcmc_hpd_var_simdata.png"), width = 6, height = 5, dpi = 300, bg = "white")
+ggsave(img("cap5_mcmc_hpd_var_simdata"), width = 6, height = 5, dpi = 300, bg = "white")
 
 
 

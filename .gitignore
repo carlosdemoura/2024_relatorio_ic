@@ -1,6 +1,9 @@
 cap1_gibbs.R
 *.cdr
 *.rds
-!cap4_data_tmax.rds
+!data_tmax.rds
+!df.rds
 img/
-img0/
+old_rds/
+light/
+.Rproj.user
