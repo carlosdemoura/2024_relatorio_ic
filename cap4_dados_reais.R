@@ -3,6 +3,12 @@ devtools::load_all("D:/carlos/01_pesquisa/fastan")
 library(tidyverse)
 source("utils.R")
 
+p_missing_max = 30
+
+df =
+  readRDS(file = "D:/carlos/01_pesquisa/2024_bayes/2024_relatorio_ic/cap4_data_tmax.rds") %>%
+  arrange(alt_tipo, station.id, semana) %>%
+  filter_by_max_missing("temp_max", "station.id", p_missing_max/100)
 
 #####################
 #####   Geral   #####

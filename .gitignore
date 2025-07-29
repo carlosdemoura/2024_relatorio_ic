@@ -2,6 +2,7 @@ cap1_gibbs.R
 *.cdr
 *.rds
 !data_tmax.rds
+!stations.rds
 !df.rds
 img/
 old_rds/
