@@ -3,8 +3,7 @@ cap1_gibbs.R
 *.rds
 !data_tmax.rds
 !stations.rds
-!df.rds
 img/
-old_rds/
-light/
+proj/
+cmd/
 .Rproj.user

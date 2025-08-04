@@ -3,7 +3,7 @@ img = function(x, extension = "png") {paste0("D:/carlos/01_pesquisa/2024_bayes/2
 
 save_proj = function(proj) {
   name = proj |> substitute() |> deparse() |> paste0(".rds")
-  saveRDS(proj, name)
+  saveRDS(proj, paste0("proj/", name))
   proj$fit = NULL
   saveRDS(proj, paste0("light/", name))
 }
